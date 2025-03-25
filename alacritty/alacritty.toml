@@ -1,0 +1,25 @@
+import = ["~/.dotfiles/alacritty/tokyo-night.toml"]
+
+[font]
+normal = { family = "Cascadia Mono NF", style = "Regular" }
+bold = { family = "Cascadia Mono NF", style = "Bold" }
+italic = { family = "Cascadia Mono NF", style = "Italic" }
+bold_italic = { family = "Cascadia Mono NF", style = "Bold Italic" }
+size = 14
+builtin_box_drawing = true
+
+[shell]
+program = "/opt/homebrew/bin/zellij"
+
+[window]
+padding.x = 16
+padding.y = 14
+decorations = "buttonless"
+option_as_alt = "OnlyLeft"
+
+[keyboard]
+bindings = [
+  { key = "F11", action = "ToggleFullscreen" },
+  { key= "Q", mods="Control", action="None" },
+  { key= "W", mods="Control", action= "None" },
+]

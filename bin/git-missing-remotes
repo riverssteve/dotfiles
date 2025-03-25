@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if ! hash git ; then
+  printf "\e[31m%s\e[0m\n" "Error: git not available"
+  exit 0
+fi
+
+# List local branches that have no remote
+git branch -r | awk '{print $1}' | grep -E -v -f /dev/fd/0 <(git branch -vv | grep gone) | awk '{print $1}'

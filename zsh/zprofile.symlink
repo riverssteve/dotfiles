@@ -1,0 +1,96 @@
+#!/usr/bin/env zsh
+
+function add_to_manpath {
+    case ":$PATH:" in
+        *":$1:"*) :;;              # already there
+        *) MANPATH="$1:$MANPATH";; # or prepend
+    esac
+}
+
+function prepend_to_path {
+    case ":$PATH:" in
+        *":$1:"*) :;;        # already there
+        *) PATH="$1:$PATH";; # or prepend
+    esac
+}
+
+function append_to_path {
+    case ":$PATH:" in
+        *":$1:"*) :;;        # already there
+        *) PATH="$1:$PATH";; # or prepend
+    esac
+}
+
+# Set up brew
+test -d "/opt/homebrew" && {
+    eval $(/opt/homebrew/bin/brew shellenv)
+}
+
+# Use GNU unix utils
+local BREW="$(brew --prefix)"
+local GNUBIN="$BREW/opt/coreutils/libexec/gnubin"
+local GNUMAN="$BREW/opt/coreutils/libexec/gnuman"
+local HOMEBIN="$HOME/.local/bin"
+
+# shortcut to this dotfiles path is $DOTFILES
+export DOTFILES="$HOME/.dotfiles"
+export TOOLS="$HOME/config/tools"
+
+# project folder that we can `c [tab]` to
+export PROJECTS="$HOME/code"
+
+# Set editor defaults
+export EDITOR="nvim"
+export VEDITOR="pycharm"
+export MANPAGER="${BREW}/bin/less"
+
+# Ensure NVM is lazy-loaded
+export NVM_LAZY_LOAD=true
+export NVM_NO_USE=true
+
+# Construct path
+if [[ $( uname ) == "Darwin" ]] && [[ $( arch ) == "arm64" ]]; then
+    path=(
+        $GNUBIN
+        $DOTFILES/bin
+        $BREW/bin
+        $HOME/.local/bin
+        $BREW/binutils/bin
+        $TOOLS/bin
+        /usr/local/bin
+        /usr/bin
+        /bin
+        /usr/local/sbin
+        /usr/sbin
+        /sbin
+    )
+fi
+
+export PATH
+
+MANPATH="$BREW/opt/coreutils/libexec/gnuman:$BREW/opt/grep/libexec/gnuman:/usr/share/man"
+
+export MANPATH
+
+if [[ $( uname ) == "Darwin" ]] ; then
+    ssh-add -K > /dev/null 2>&1
+else
+    ssh-add > /dev/null 2>&1
+fi
+
+
+export GPG_TTY=$(tty)
+
+# Load profile scripts
+for i in $(fd -d2 "profile.zsh" -0)
+do
+    [ "$i" != "" ] && source $i
+done
+
+[[ -f $HOME/.config/secrets ]] && {
+    source $HOME/.config/secrets
+}
+
+[[ -f $HOME/.config/extras.zsh ]] && {
+    source $HOME/.config/extras.zsh
+}

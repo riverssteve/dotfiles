@@ -1,0 +1,161 @@
+#!/usr/bin/env zsh
+# zshrc
+
+# uncomment this and the last line for zprof info
+# zmodload zsh/zprof
+# zprof
+
+# ZStyle {{{
+# Style settings
+zstyle ':zim:zmodule' use 'degit'
+
+# }}}
+# ZIM Plugin Manager {{{
+# TODO: Move this into install script.
+# Download zimfw plugin manager if missing.
+ZIM_HOME=~/.zim
+if [[ ! -d "${ZIM_HOME}" ]] ; then
+    mkdir "${ZIM_HOME}"
+fi
+
+if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
+  curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
+      https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+fi
+
+# Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
+  source ${ZIM_HOME}/zimfw.zsh init -q
+fi
+
+if [[ ! -d ${HOME}/.config/zsh/functions ]]; then
+    mkdir -p ${HOME}/.config/zsh/functions
+fi
+
+# Initialize modules.
+source ${ZIM_HOME}/init.zsh
+# }}}
+# Config {{{
+
+# Use emac mode
+bindkey -e
+bindkey "\e[1;3C" forward-word
+bindkey "\e[1;3D" backward-word
+
+fpath=(
+  $TOOLS/zsh
+  $HOME/.config/zsh/functions
+  $fpath
+)
+
+autoload -U "$DOTFILES"/zsh/functions/*(:t)
+
+local_functions=$( ls $HOME/.config/zsh/functions | wc -l )
+if [[ $local_functions -gt 0 ]]; then
+    autoload -U "$HOME"/.config/zsh/functions/*(:t)
+fi
+
+# Options {{{
+setopt extendedglob local_options
+setopt sharehistory
+
+# IO
+setopt INTERACTIVECOMMENTS     # Allow comments even in interactive shells.
+
+# History
+setopt APPEND_HISTORY          # Append history list to the history file, rather than replace it.
+setopt INC_APPEND_HISTORY      # Save command immediately
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+
+
+# History settings
+HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
+HISTSIZE=20000
+SAVEHIST=10000
+HISTTIMEFORMAT="[%F %T] "
+
+# Keyboard settings
+bindkey "\e\e[D" backward-word
+bindkey "\e\e[C" forward-word
+bindkey "\e[H"   beginning-of-line
+bindkey "\e[F"   end-of-line
+bindkey "\e[5~"  beginning-of-history
+bindkey "\e[6~"  end-of-history
+bindkey "\e[3~"  delete-char
+bindkey "\e[5C"  forward-word
+bindkey "\e[5D"  backward-word
+bindkey "^[w"    backward-kill-word
+
+WORDCHARS='*?_[]~&;!#$%^(){}<>-'
+backward-kill-dir () {
+    local WORDCHARS=${WORDCHARS/\/}
+    zle backward-kill-word
+}
+zle -N backward-kill-dir
+bindkey '^[^?' backward-kill-dir
+
+# }}}
+# Load everything but the path, completion, profile and post files
+for i in $(fd -0 -d2 -E path.zsh -E completion.zsh -E profile.zsh -E post.zsh ".zsh" $DOTFILES)
+do
+    [ "$i" != "" ] && source $i
+done
+
+# Trigger compinit (it's opt-in only)
+autoload -Uz compinit
+() {
+  if [[ $# -gt 0 ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+} ${ZDOTDIR:-$HOME}/.zcompdump(N.mh+24)
+
+# Prompt
+eval "$(starship init zsh)"
+# }}}
+# Aliases {{{
+# [ -f "${DOTFILES}/zsh/aliases.zsh" ] && source "${DOTFILES}/zsh/aliases.zsh"
+# }}}
+# Post setup {{{
+# Load dircolors if available
+hash dircolors 2> /dev/null && {
+    [ -f "$HOME/.dircolors" ] && eval "$(dircolors "$HOME/.dircolors")"
+}
+
+# Load iterm shell integration if present
+[ -f ~/.iterm2_shell_integration.zsh ] && source "${HOME}/.iterm2_shell_integration.zsh"
+
+eval "$(direnv hook zsh)"
+
+pushd $DOTFILES > /dev/null
+for i in $(fd -d2 "post.zsh" -0)
+do
+    [ "$i" != "" ] && source $i
+done
+popd > /dev/null
+
+# pyenv needs to be manually defined at the end since it manipulates path
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init - zsh)"
+
+#     # Set up pyenv-virtualenvwrapper
+#     export WORKON_HOME=$HOME/.virtualenvs
+#     pyenv virtualenvwrapper
+fi
+
+eval "$(atuin init zsh)"
+
+source "$HOME/.cargo/env"
+
+# }}}
+
+# zprof
+
+# vim:foldmethod=marker:foldlevel=0
+

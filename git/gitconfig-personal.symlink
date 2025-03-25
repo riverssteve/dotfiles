@@ -1,0 +1,12 @@
+[user]
+	name = Steve Rivers
+	email = git@rivers.dev
+	signingKey = 2645CA390FB46823
+
+[gpg]
+    program = /opt/homebrew/bin/gpg
+	format = openpgp
+
+[gpg "ssh"]
+	program = ssh-keygen
+	allowedsignersfile =

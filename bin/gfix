@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+selected_commit=$(git log origin/main..HEAD | fzf --height 30% --reverse --border --info=inline | cut -d ' ' -f1)
+
+# TODO check and error
+git commit --fixup=${selected_commit} && git rebase -i origin/main --autosquash

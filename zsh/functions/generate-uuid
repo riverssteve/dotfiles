@@ -1,0 +1,5 @@
+generate-uuid() {
+    _id=$(python -c "import uuid; print(uuid.uuid4(), end='')")
+    echo "${_id}"
+    [[ $(uname) == "Darwin" ]] && printf "%s" "${_id}" | pbcopy ; echo "Copied to clipboard"
+}
