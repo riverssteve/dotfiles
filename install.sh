@@ -25,7 +25,7 @@ if is_mac; then
     brewfile_path="${dirpath}/homebrew/m1.brewfile"
     pinfo "Installing brewfile from ${brewfile_path}"
     pwarn "Some commands may require sudo priviledges"
-    brew bundle --file="${brewfile_path}" -v --no-lock install || pwarn "bundle encoutered errors, continuing"
+    brew bundle --file="${brewfile_path}" -v install || pwarn "bundle encoutered errors, continuing"
 elif is_ubuntu; then
     bash -eu -o pipefail ubuntu/packages.sh
 fi
