@@ -22,7 +22,7 @@ jobs:
           cache-name: cache-brew-cellar
         with:
           path: |
-            /usr/local/Cellar
+            /opt/homebrew/Cellar
           key: ${{ runner.os }}-build-${{ env.cache-name }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
