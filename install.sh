@@ -32,5 +32,5 @@ fi
 
 find "${DOTFILES}" -name 'install.sh' -mindepth 2 -print0 | while read -rd $'\0' file; do
     pinfo "Running installer ${file}"
-    bash -eu -o pipefail "${file}"
+    bash -eu -o pipefail "${file}" || echo "$file returned an error"
 done
