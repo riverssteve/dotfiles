@@ -33,7 +33,8 @@ fi
 if ! command -v brew; then
     if is_mac; then
         echo "[Bootstrap] Installing Homebrew"
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/opt/homebrew/bin/brew shellenv)"
 
         echo "[Bootstrap] Install a newer bash"
         brew install bash
