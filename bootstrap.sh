@@ -34,22 +34,15 @@ if ! command -v brew; then
     if is_mac; then
         echo "[Bootstrap] Installing Homebrew"
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+        echo "[Bootstrap] Install a newer bash"
+        brew install bash
     fi
 fi
 
 if [[ ! -d $HOME/.config ]]; then
     echo "[Bootstrap] Creating $HOME/.config"
     mkdir -p "$HOME/.config"
-fi
-
-if [[ ! -d $HOME/.nvm ]]; then
-    echo "[Bootstrap] Downloading nvm..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
-fi
-
-if is_mac; then
-    echo "[Bootstrap] Install a newer bash"
-    brew install bash
 fi
 
 echo ""
