@@ -1,0 +1,5 @@
+zmodule https://github.com/agkozak/zsh-z
+zmodule zsh-users/zsh-syntax-highlighting
+zmodule zsh-users/zsh-autosuggestions
+zmodule https://github.com/Aloxaf/fzf-tab
+zmodule https://github.com/lukechilds/zsh-nvm
