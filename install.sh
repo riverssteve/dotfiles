@@ -11,7 +11,10 @@ cd "$(dirname ${0})"
 
 # shellcheck disable=SC2155
 export DOTFILES=$(pwd)
-export ICLOUD_CONFIG=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Config
+
+if is_mac; then
+    export ICLOUD_CONFIG=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Config
+fi
 
 shopt -s globstar nullglob
 pinfo "Creating symlinks"
