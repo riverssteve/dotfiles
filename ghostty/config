@@ -1,0 +1,7 @@
+theme = tokyonight_night
+font-family = "Cascadia Mono NF"
+font-size = 14
+font-style = "Cascadia Code NF Regular Regular"
+adjust-cell-width = -7%
+macos-option-as-alt = left
+cursor-style = block

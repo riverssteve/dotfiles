@@ -1,0 +1,145 @@
+[core]
+	excludesfile = ~/.gitignore
+
+[init]
+	defaultBranch = main
+
+[includeIf "gitdir:~/code/kraken/"]
+	path = .gitconfig-work
+
+[includeIf "gitdir:~/code/"]
+	path = .gitconfig-personal
+
+[includeIf "gitdir:~/.dotfiles/"]
+	path = .gitconfig-personal
+
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	ui = true
+	pager = true
+
+[color "diff"]
+	whitespace = red reverse
+	old = red
+	new = green
+
+[diff]
+    colorMoved = default
+
+[diff]
+    tool = difftastic
+    external = difft
+	colorMoved = zebra
+
+[difftool]
+    prompt = false
+
+[difftool "difftastic"]
+    cmd = difft "$LOCAL" "$REMOTE"
+
+[fetch]
+	prune = true
+	pruneTags = true
+
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+
+[format]
+	pretty = format:%C(blue)%h%C(reset) - %s %C(green)- %an%C(reset) %C(yellow)(%ae)%C(reset) %C(blue)(%ar)%C(reset)
+
+[gpg]
+	program = /opt/homebrew/bin/gpg
+	format = ssh
+
+[help]
+	autocorrect = 1
+
+[merge]
+    conflictstyle = diff3
+
+[pager]
+    difftool = true
+
+[push]
+	default = simple
+
+[status]
+	submoduleSummary = true
+
+[absorb]
+	maxStack=50
+
+[tag]
+	forceSignAnnotated = false
+
+[mergetool]
+	keepBackup = true
+
+[alias]
+	fp = "push --force-with-lease"
+	ls = "branch --list"
+	branch-name = "!git rev-parse --abbrev-ref HEAD"
+	nicelog = log --oneline --decorate
+	loghead = "!git nicelog -n 5"
+	lh = !git loghead
+	co = checkout
+	st = status --short
+	up = pull --rebase --prune
+	rbm = rebase -i origin/main
+
+
+	# Push the current branch to the remote "origin", and set it to track
+	# the upstream branch
+	publish = "!git push -u origin $(git branch-name)"
+
+	# Delete the remote version of the current branch
+	unpublish = "!git push origin :$(git branch-name)"
+
+    # -----------
+	# FZF Aliases
+    # -----------
+
+	# Select and copy commit hash
+    flog = "!git nicelog --no-merges HEAD ^origin/main | fzf --ansi | cut -d' ' -f1 | tr -d '\n' | pbcopy"
+
+	# Pick a branch to rebase onto
+	frb = "!f() { local branch=$(git ls | fzf --height 40% --reverse); if [ -n \"$branch\" ]; then git rebase ${1:---interactive} $branch; fi }; f"
+
+    # Get recently checked out branches (most recent first)
+	recent-branches = "!git reflog | grep 'checkout: moving from .* to ' | sed 's/.*to //' | awk '!seen[$0]++' | head -20"
+
+	# Pick a branch to checkout use -r to order by most recent. By default it will order alphabetically
+    fco = "!f() { \
+		local branch; \
+        if [ \"$1\" = \"-r\" ]; then \
+            branch=$(git recent-branches | fzf --height 40% --reverse); \
+        else \
+            branch=$(git ls | fzf --height 40% --reverse); \
+        fi; \
+		if [ -n \"$branch\" ]; then \
+            branch=$(echo \"$branch\" | xargs); \
+            git checkout \"$branch\"; \
+        fi; \
+    }; f"
+
+
+	# Delete any branches that have been merged into main
+	# See also: https://gist.github.com/robmiller/5133264
+	delete-merged-branches = "!git checkout main && git pull --rebase --prune && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+	# Version that works with older master branches
+	delete-merged-branches-master = "!git checkout master && git pull --rebase --prune && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+	lb = "!git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(\"  \\033[33m%s: \\033[37m %s\\033[0m\\n\", substr($2, 1, length($2)-1), $1)}'"
+
+	mainbranch = "!git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
+	synced = "!git pull origin $(git mainbranch) --rebase"
+	update = "!git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase"
+	squash = "!git rebase -v -i $(git mainbranch)"
+
+	delete-merged-on-origin = "!git branch --all --merged remotes/origin/main | grep --invert-match main | grep --invert-match HEAD | grep \"remotes/origin/\" | cut -d \"/\" -f 3- | xargs -n 1 git push --delete origin"

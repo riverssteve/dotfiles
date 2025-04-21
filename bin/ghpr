@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+selected_pr=$(gh pr list --author "@me" | fzf --height 30% --reverse --border --info=inline | cut -f1)
+json=$(gh pr view ${selected_pr} --json number --json additions --json deletions --json title --json url)
+url=$(jq -r '.["url"]' <<< $json)
+additions=$(jq -r '.["additions"]' <<< $json)
+deletions=$(jq -r '.["deletions"]' <<< $json)
+title=$(jq -r '.["title"]' <<< $json)
+number=$(jq -r '.["number"]' <<< $json)
+
+echo "Copying #${number} PR text to clipboard"
+
+cat << EOF | pbcopy
+*${title}*
+${url} [+${additions}, -${deletions}]
+
+EOF

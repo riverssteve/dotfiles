@@ -1,0 +1,42 @@
+name: Check Dotfiles
+
+on:
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Print Brewfile
+        run: cat homebrew/m1.brewfile
+
+      - name: Cache Homebrew Cellar
+        id: cache-brew
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-brew-cellar
+        with:
+          path: |
+            /opt/homebrew/Cellar
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - if: ${{ steps.cache-brew.outputs.cache-hit == false }}
+        name: List the state of homebrew
+        continue-on-error: true
+        run: brew list
+
+      - name: Run install script
+        env:
+          NONINTERACTIVE: 1
+        run: |
+          brew install bash
+          ./install.sh

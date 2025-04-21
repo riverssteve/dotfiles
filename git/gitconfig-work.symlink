@@ -1,0 +1,11 @@
+[user]
+	name = Steve Rivers
+	email = steve.rivers@kraken.tech
+	signingkey = key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIItjJdKOm3jF9PJEdqOe9MgULJpXsUqQrlOiSqyohNmb steve.rivers@kraken.tech
+
+[gpg "ssh"]
+    program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+
+[url "ssh://git@github.com/octoenergy/"]
+	insteadof = https://github.com/octoenergy/
+

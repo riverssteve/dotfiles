@@ -1,0 +1,19 @@
+[
+  {
+    "context": "Pane",
+    "bindings": {
+      "alt-cmd-left": "pane::GoBack",
+      "alt-cmd-right": "pane::GoForward",
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-+": "zed::IncreaseBufferFontSize",
+      "cmd--": "zed::DecreaseBufferFontSize",
+      "cmd-0": "zed::ResetBufferFontSize"
+    }
+  }
+]
