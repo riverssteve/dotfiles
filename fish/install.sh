@@ -24,10 +24,13 @@ fish -c "fisher install jethrokuan/z"
 fish -c "fisher install catppuccin/fish"
 fish -c "fisher install vitallium/tokyonight-fish"
 
+ln -svf "${DOTFILES}/fish/config.fish" "${_fish_config}/config.fish"
+
 _extra="${HOME}/.config/fish/extras.fish"
 [ -f "${_extra}" ] || {
     touch "${HOME}/.config/fish/extras.fish"
 }
+
 _secret="${HOME}/.config/fish/secrets.fish"
 [ -f "${_secret}" ] || {
     touch "${_secret}"
