@@ -19,6 +19,11 @@ if status is-interactive
     end
 end
 
+# set up homebrew
+if test -d /opt/homebrew/
+    /opt/homebrew/bin/brew shellenv | source
+end
+
 # Set up path
 fish_add_path /Users/steve.rivers/.cargo/bin
 fish_add_path /Users/steve.rivers/.pyenv/shims
